@@ -12,18 +12,22 @@ typedef struct cosa {
 
 cosa_t *crear_cosa(int clave)
 {
-	cosa_t *c = (cosa_t *)malloc(sizeof(cosa_t));
-	if (c)
-		c->clave = clave;
+	cosa_t *c = calloc(1, sizeof(cosa_t));
+	if (c == NULL)
+		return NULL;
+	c->clave = clave;
 	return c;
 }
 
-int comparador(void *elemento1, void *elemento2){
-	if (elemento1 == NULL || elemento2 == NULL || ((cosa_t*)elemento1)->clave == ((cosa_t*)elemento2)->clave)
-		return 0;
-	if (((cosa_t*)elemento1)->clave > ((cosa_t*)elemento2)->clave)
-		return 1;
-	return -1;
+int comparador(void *elemento1, void *elemento2)
+{
+        if (elemento1 == NULL || elemento2 == NULL)
+                return 0;
+        if (((cosa_t *)elemento1)->clave > ((cosa_t *)elemento2)->clave)
+                return 1;
+        if (((cosa_t *)elemento1)->clave < ((cosa_t *)elemento2)->clave)
+                return -1;
+        return 0;
 }
 
 void destruir_elemento(void *elemento){
@@ -54,7 +58,7 @@ void inserta_raiz(){
 	cosa_t *prueba_5 = crear_cosa(5);
 	cosa_t *prueba_6 = crear_cosa(6);
 
-	prueba = abb_insertar(abb, prueba_3);
+	abb_insertar(abb, prueba_3);
 
 	pa2m_afirmar(!abb_vacio(abb) && abb_tamanio(abb) == 1, "Inserta correctamente la raíz del árbol.");
 	
@@ -62,7 +66,7 @@ void inserta_raiz(){
 	abb_insertar(abb, prueba_1);
 	abb_insertar(abb, prueba_6);
 	abb_insertar(abb, prueba_4);
-	prueba = abb_insertar(abb, prueba_5);
+	abb_insertar(abb, prueba_5);
 	pa2m_afirmar(!abb_vacio(abb) && abb_tamanio(abb) == 6, "Inserta correctamente 5 elementos a un árbol que ya tiene raíz.");
 
 	destruir_elemento(prueba_1);
@@ -71,6 +75,7 @@ void inserta_raiz(){
 	destruir_elemento(prueba_4);
 	destruir_elemento(prueba_5);
 	destruir_elemento(prueba_6);
+
 	abb_destruir(prueba);
 	abb_destruir(abb);
 }
