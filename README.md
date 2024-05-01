@@ -60,6 +60,10 @@ Un árbol es una colección de nodos los cuales, a su vez, pueden estar conectad
 
 Un árbol está compuesto por un nodo principal, llamado **nodo raíz**, y cero o muchos subárboles no vacíos, los cuales tienen su nodo raíz conectado mediante un vértice al nodo raíz.
 
+<div align="center">
+<img width="70%" src="img/estructura_arbol.drawio.svg">
+</div>
+
 Estando en un nodo, puedo ver los subárboles que se encuentran 'debajo' del mismo. En este caso, el nodo donde estamos parados es el **nodo padre**, y los nodos que se encuentran 'debajo' de este mismo serían sus **nodos hijos**. 
 
 ##### Casos especiales: 
@@ -68,6 +72,10 @@ Estando en un nodo, puedo ver los subárboles que se encuentran 'debajo' del mis
 
 #### Árbol Binario
 Son árboles relacionados a las operaciones de búsqueda, que tienen el objetivo de aproximarse a la búsqueda binaria. En este caso, el **nodo raíz está únicamente conectado con dos subárboles**, el subárbol izquierdo y el subárbol derecho.
+
+<div align="center">
+<img width="70%" src="img/estructura_abb.drawio.svg">
+</div>
 
 Las operaciones que se pueden realizar con un árbol binario son:
 - Crear
