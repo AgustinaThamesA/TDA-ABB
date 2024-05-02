@@ -42,7 +42,7 @@ void crear_arbol_devuelve_arbol_con_nodos_null(){
 	abb_destruir(abb);
 }
 
-void inserta_raiz(){
+void insertar_elementos(){
 	abb_t *abb = NULL;
 	cosa_t *prueba_100 = crear_cosa(100);
 	abb_t *prueba = abb_insertar(abb, prueba_100);
@@ -67,6 +67,7 @@ void inserta_raiz(){
 	abb_insertar(abb, prueba_6);
 	abb_insertar(abb, prueba_4);
 	abb_insertar(abb, prueba_5);
+
 	pa2m_afirmar(!abb_vacio(abb) && abb_tamanio(abb) == 6, "Inserta correctamente 5 elementos a un árbol que ya tiene raíz.");
 
 	destruir_elemento(prueba_1);
@@ -80,7 +81,6 @@ void inserta_raiz(){
 	abb_destruir(abb);
 }
 
-
 int main()
 {
 	pa2m_nuevo_grupo(
@@ -89,8 +89,7 @@ int main()
 
 	pa2m_nuevo_grupo(
 		"\n======================== Pruebas inserción ========================");
-	inserta_raiz();
-
+	insertar_elementos();
 
 	pa2m_nuevo_grupo(
 		"\n======================== Pruebas eliminación ========================");

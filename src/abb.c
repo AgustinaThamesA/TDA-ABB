@@ -2,11 +2,11 @@
 #include "abb_estructura_privada.h"
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 nodo_abb_t *nodo_crear(void *elemento){
 	nodo_abb_t *nodo = malloc(sizeof(nodo_abb_t));
 	if (nodo == NULL) {
-		free(nodo);
 		return NULL;
 	}
 	nodo->elemento = elemento;
@@ -18,7 +18,7 @@ nodo_abb_t *nodo_crear(void *elemento){
 abb_t *abb_crear(abb_comparador comparador)
 {
 	abb_t *abb = malloc(sizeof(abb_t));
-	if (abb == NULL){
+	if (abb == NULL && comparador == NULL){
 		free(abb);
 		return NULL;
 	}
@@ -28,86 +28,141 @@ abb_t *abb_crear(abb_comparador comparador)
 	return abb;
 }
 
-abb_t *abb_insertar_recursivo(abb_t *arbol, nodo_abb_t *nodo_actual, void *elemento){
-	if (arbol == NULL || nodo_actual == NULL)
+nodo_abb_t *abb_insertar_recursivo(abb_t *arbol, nodo_abb_t *nodo_actual, void *elemento){
+	if (arbol == NULL || !(arbol->comparador))
 		return NULL;
 	
-	if (nodo_actual->izquierda == NULL && nodo_actual->derecha == NULL) {
+	if (nodo_actual == NULL) {
 		nodo_abb_t *nodo_aux = nodo_crear(elemento);
 		if (nodo_aux == NULL)
 			return NULL;
-		nodo_actual->izquierda = nodo_aux;
-		(arbol->tamanio)++;
-		return arbol;
+		return nodo_aux;
 	}
 
 	if (arbol->comparador(elemento, nodo_actual->elemento) <= 0){
-		arbol = abb_insertar_recursivo(arbol, nodo_actual->izquierda, elemento);
-		if (arbol == NULL)
+		nodo_actual->izquierda = abb_insertar_recursivo(arbol, nodo_actual->izquierda, elemento);
+		if (nodo_actual->izquierda == NULL)
 			return NULL;
 	} else {
-		arbol = abb_insertar_recursivo(arbol, nodo_actual->derecha, elemento);
-		if (arbol == NULL)
+		nodo_actual->derecha = abb_insertar_recursivo(arbol, nodo_actual->derecha, elemento);
+		if (nodo_actual->derecha == NULL)
 			return NULL;
 	}
 		
-	return arbol;
+	return nodo_actual;
 }
 
 abb_t *abb_insertar(abb_t *arbol, void *elemento){
 	if (arbol == NULL)
 		return NULL;
-	
+
 	if (arbol->nodo_raiz == NULL) {
-		arbol->nodo_raiz = nodo_crear(elemento);
-		if (arbol->nodo_raiz == NULL)
+		nodo_abb_t* nodo_aux = nodo_crear(elemento);
+		if (nodo_aux == NULL)
 			return NULL;
+		arbol->nodo_raiz = nodo_aux;
 		arbol->tamanio = 1;
 		return arbol;
 	}
-	arbol = abb_insertar_recursivo(arbol, elemento, arbol->nodo_raiz);
+	
+	
+	arbol->nodo_raiz->izquierda = abb_insertar_recursivo(arbol, arbol->nodo_raiz->izquierda, elemento);
+	(arbol->tamanio)++;
 	return arbol;
 }
 
-void *abb_quitar(abb_t *arbol, void *elemento)
-{
-	return elemento;
-}
+nodo_abb_t *sacar_nodo_inorden(nodo_abb_t *nodo, void **eliminado){
+	if (nodo->derecha == NULL) {
+		*eliminado = nodo->elemento;
+		nodo_abb_t *nodo_aux = nodo->izquierda;
+		free(nodo);
+		return nodo_aux;
+	}
 
-nodo_abb_t *buscar_nodo_abb(nodo_abb_t *nodo, void *elemento, abb_comparador(comparador)){
-	if (nodo == NULL || nodo->elemento == NULL)
-		return NULL;
-	
-	if (comparador(elemento, nodo->elemento) <= 0)
-		return buscar_nodo_abb(nodo->izquierda, elemento, comparador);
-	
-	if (comparador(elemento, nodo->elemento) > 0)
-		return buscar_nodo_abb(nodo->derecha, elemento, comparador);
-	
+	nodo->derecha = sacar_nodo_inorden(nodo->derecha, eliminado);
+
 	return nodo;
 }
+
+nodo_abb_t *abb_quitar_recursivo(abb_t *arbol, nodo_abb_t *nodo, void *elemento, void **eliminado){
+	if (abb_vacio(arbol))
+		return NULL;
+	if (arbol->comparador(elemento, nodo->elemento) == 0) {
+		*eliminado = nodo->elemento;
+
+		if (nodo->izquierda != NULL && nodo->derecha != NULL){
+			void *nodo_derecha = NULL;
+			nodo->izquierda = sacar_nodo_inorden(nodo->izquierda, &nodo_derecha);
+			nodo->elemento = nodo_derecha;
+			return nodo;
+		} else {
+			free(nodo);
+			if (nodo->izquierda == NULL)
+				return nodo->derecha;
+			return nodo->izquierda;
+		}
+	} else if (arbol->comparador(elemento, nodo->elemento) < 0) {
+		nodo->izquierda = abb_quitar_recursivo(arbol, nodo->izquierda, elemento, eliminado);
+	} else {
+		nodo->derecha = abb_quitar_recursivo(arbol, nodo->derecha, elemento, eliminado);
+	}
+	return nodo;
+}
+
+
+void *abb_quitar(abb_t *arbol, void *elemento)
+{
+	if (arbol == NULL)
+		return NULL;
+	
+	void *eliminado = NULL;
+
+	if (elemento != abb_buscar(arbol, elemento))
+		return NULL;
+
+	arbol->nodo_raiz = abb_quitar_recursivo(arbol, arbol->nodo_raiz, elemento, &eliminado);
+	(arbol->tamanio)--;
+
+	return eliminado;
+}
+
+nodo_abb_t *buscar_nodo_abb(nodo_abb_t *nodo, void *elemento, abb_comparador comparador){
+	if (nodo == NULL || comparador == NULL)
+		return NULL;
+	
+	if (comparador(elemento, nodo->elemento) < 0)
+		return buscar_nodo_abb(nodo->izquierda, elemento, comparador);
+
+	if (comparador(elemento, nodo->elemento) > 0)
+		return buscar_nodo_abb(nodo->derecha, elemento, comparador);
+	else
+		return nodo;
+}
+
 
 void *abb_buscar(abb_t *arbol, void *elemento)
 {
 	if (abb_vacio(arbol))
 		return NULL;
 	
-	nodo_abb_t *nodo_a_buscar = buscar_nodo_abb(arbol->nodo_raiz, elemento, arbol->comparador);
-	
-	if (nodo_a_buscar == NULL || nodo_a_buscar->elemento == NULL)
+	nodo_abb_t *nodo_buscado = buscar_nodo_abb(arbol->nodo_raiz, elemento, arbol->comparador);
+	if (nodo_buscado == NULL)
 		return NULL;
-	
-	return nodo_a_buscar->elemento;
+	//return nodo_buscado->elemento;
+	return elemento;
 }
+
 
 bool abb_vacio(abb_t *arbol)
 {
-	return (arbol == NULL || arbol->nodo_raiz == NULL);
+	return (arbol == NULL || arbol->nodo_raiz == NULL || abb_tamanio(arbol) == 0);
 }
 
 size_t abb_tamanio(abb_t *arbol)
 {
-	return (arbol == NULL) ? 0 : arbol->tamanio;
+	if (arbol == NULL)
+		return 0;
+	return arbol->tamanio;
 }
 
 void destruir_nodo_abb(abb_t *arbol, nodo_abb_t *nodo){
@@ -129,8 +184,7 @@ void abb_destruir(abb_t *arbol)
 		return;
 	if (arbol->nodo_raiz != NULL){
 		destruir_nodo_abb(arbol, arbol->nodo_raiz);
-		free(arbol->nodo_raiz);
-		arbol->nodo_raiz = NULL;
+		
 	}
 		
 	free(arbol);
