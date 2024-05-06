@@ -19,7 +19,7 @@ nodo_abb_t *nodo_crear(void *elemento)
 abb_t *abb_crear(abb_comparador comparador)
 {
 	abb_t *abb = malloc(sizeof(abb_t));
-	if (abb == NULL && comparador == NULL) {
+	if (abb == NULL || comparador == NULL) {
 		free(abb);
 		return NULL;
 	}
@@ -213,6 +213,7 @@ void abb_destruir(abb_t *arbol)
 	}
 
 	free(arbol);
+	arbol = NULL;
 }
 
 void destruir_todo_nodo_abb(abb_t *arbol, nodo_abb_t *nodo,
@@ -239,7 +240,9 @@ void abb_destruir_todo(abb_t *arbol, void (*destructor)(void *))
 		return;
 	if (arbol->nodo_raiz)
 		destruir_todo_nodo_abb(arbol, arbol->nodo_raiz, destructor);
+
 	free(arbol);
+	arbol = NULL;
 }
 
 // IZQUIERDA ACTUAL DERECHA
@@ -250,21 +253,17 @@ size_t inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		return 0;
 
 	size_t iteraciones = 0;
-	bool continuo_iterando = true;
 
-	while (nodo != NULL && iteraciones < tamanio && continuo_iterando) {
-		continuo_iterando = funcion(nodo->elemento, aux);
+	if (nodo->izquierda)
+		iteraciones += inorden_con_cada_elemento(nodo->izquierda,
+							 tamanio, funcion, aux);
 
-		if (nodo->izquierda)
-			iteraciones += inorden_con_cada_elemento(
-				nodo->izquierda, tamanio, funcion, aux);
+	funcion(nodo->elemento, aux);
+	iteraciones++;
 
-		iteraciones++;
-
-		if (nodo->derecha)
-			iteraciones += inorden_con_cada_elemento(
-				nodo->derecha, tamanio, funcion, aux);
-	}
+	if (nodo->derecha)
+		iteraciones += inorden_con_cada_elemento(nodo->derecha, tamanio,
+							 funcion, aux);
 
 	return iteraciones;
 }
@@ -277,21 +276,17 @@ size_t preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		return 0;
 
 	size_t iteraciones = 0;
-	bool continuo_iterando = true;
 
-	while (nodo != NULL && iteraciones < tamanio && continuo_iterando) {
-		continuo_iterando = funcion(nodo->elemento, aux);
+	funcion(nodo->elemento, aux);
+	iteraciones++;
 
-		iteraciones++;
+	if (nodo->izquierda)
+		iteraciones += preorden_con_cada_elemento(
+			nodo->izquierda, tamanio, funcion, aux);
 
-		if (nodo->izquierda)
-			iteraciones += preorden_con_cada_elemento(
-				nodo->izquierda, tamanio, funcion, aux);
-
-		if (nodo->derecha)
-			iteraciones += preorden_con_cada_elemento(
-				nodo->derecha, tamanio, funcion, aux);
-	}
+	if (nodo->derecha)
+		iteraciones += preorden_con_cada_elemento(
+			nodo->derecha, tamanio, funcion, aux);
 
 	return iteraciones;
 }
@@ -304,21 +299,17 @@ size_t postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		return 0;
 
 	size_t iteraciones = 0;
-	bool continuo_iterando = true;
 
-	while (nodo != NULL && iteraciones < tamanio && continuo_iterando) {
-		continuo_iterando = funcion(nodo->elemento, aux);
+	if (nodo->izquierda)
+		iteraciones += postorden_con_cada_elemento(
+			nodo->izquierda, tamanio, funcion, aux);
 
-		if (nodo->izquierda)
-			iteraciones += postorden_con_cada_elemento(
-				nodo->izquierda, tamanio, funcion, aux);
+	if (nodo->derecha)
+		iteraciones += postorden_con_cada_elemento(
+			nodo->derecha, tamanio, funcion, aux);
 
-		if (nodo->derecha)
-			iteraciones += postorden_con_cada_elemento(
-				nodo->derecha, tamanio, funcion, aux);
-
-		iteraciones++;
-	}
+	funcion(nodo->elemento, aux);
+	iteraciones++;
 
 	return iteraciones;
 }
@@ -349,100 +340,89 @@ size_t abb_con_cada_elemento(abb_t *arbol, abb_recorrido recorrido,
 	return cant_elementos_iterados;
 }
 
-// IZQUIERDA ACTUAL DERECHA
-size_t inorden_recorrer(nodo_abb_t *nodo, size_t tamanio, void **array,
-			size_t tamanio_array)
+void inorden_recorrer(nodo_abb_t *nodo_actual, void **array,
+		      size_t tamanio_array, size_t *contador)
 {
-	if (nodo == NULL)
-		return 0;
+	if (!nodo_actual || *contador >= tamanio_array)
+		return;
 
-	size_t iteraciones = 0;
+	inorden_recorrer(nodo_actual->izquierda, array, tamanio_array,
+			 contador);
 
-	while (nodo != NULL && iteraciones < tamanio) {
-		if (nodo->izquierda)
-			iteraciones += inorden_recorrer(
-				nodo->izquierda, tamanio, array, tamanio_array);
-
-		iteraciones++;
-
-		if (nodo->derecha)
-			iteraciones += inorden_recorrer(nodo->derecha, tamanio,
-							array, tamanio_array);
+	if (*contador < tamanio_array) {
+		array[*contador] = nodo_actual->elemento;
+		*contador = *contador + 1;
 	}
 
-	return iteraciones;
+	inorden_recorrer(nodo_actual->derecha, array, tamanio_array, contador);
 }
 
-// ACTUAL IZQUIERDA DERECHA
-size_t preorden_recorrer(nodo_abb_t *nodo, size_t tamanio, void **array,
-			 size_t tamanio_array)
+void preorden_recorrer(nodo_abb_t *nodo_actual, void **array,
+		       size_t tamanio_array, size_t *contador)
 {
-	if (nodo == NULL)
-		return 0;
+	if (!nodo_actual || *contador >= tamanio_array)
+		return;
 
-	size_t iteraciones = 0;
-
-	while (nodo != NULL && iteraciones < tamanio) {
-		iteraciones++;
-
-		if (nodo->izquierda)
-			iteraciones += preorden_recorrer(
-				nodo->izquierda, tamanio, array, tamanio_array);
-
-		if (nodo->derecha)
-			iteraciones += preorden_recorrer(nodo->derecha, tamanio,
-							 array, tamanio_array);
+	if (*contador < tamanio_array) {
+		array[*contador] = nodo_actual->elemento;
+		*contador = *contador + 1;
 	}
 
-	return iteraciones;
+	preorden_recorrer(nodo_actual->izquierda, array, tamanio_array,
+			  contador);
+
+	preorden_recorrer(nodo_actual->derecha, array, tamanio_array, contador);
 }
 
-// IZQUIERDA DERECHA ACTUAL
-size_t postorden_recorrer(nodo_abb_t *nodo, size_t tamanio, void **array,
-			  size_t tamanio_array)
+void postorden_recorrer(nodo_abb_t *nodo_actual, void **array,
+			size_t tamanio_array, size_t *contador)
 {
-	if (nodo == NULL)
-		return 0;
+	if (!nodo_actual || *contador >= tamanio_array)
+		return;
 
-	size_t iteraciones = 0;
+	postorden_recorrer(nodo_actual->izquierda, array, tamanio_array,
+			   contador);
 
-	while (nodo != NULL && iteraciones < tamanio) {
-		if (nodo->izquierda)
-			iteraciones += postorden_recorrer(
-				nodo->izquierda, tamanio, array, tamanio_array);
+	postorden_recorrer(nodo_actual->derecha, array, tamanio_array,
+			   contador);
 
-		if (nodo->derecha)
-			iteraciones += postorden_recorrer(
-				nodo->derecha, tamanio, array, tamanio_array);
-
-		iteraciones++;
+	if (*contador < tamanio_array) {
+		array[*contador] = nodo_actual->elemento;
+		*contador = *contador + 1;
 	}
+}
 
-	return iteraciones;
+void abb_recorrer_rec(nodo_abb_t *nodo_actual, abb_recorrido recorrido,
+		      void **array, size_t tamanio_array, size_t *contador)
+{
+	if (!nodo_actual || *contador >= tamanio_array)
+		return;
+
+	switch (recorrido) {
+	case PREORDEN:
+		preorden_recorrer(nodo_actual, array, tamanio_array, contador);
+		break;
+
+	case INORDEN:
+		inorden_recorrer(nodo_actual, array, tamanio_array, contador);
+		break;
+
+	case POSTORDEN:
+		postorden_recorrer(nodo_actual, array, tamanio_array, contador);
+		break;
+
+	default:
+		break;
+	}
+	return;
 }
 
 size_t abb_recorrer(abb_t *arbol, abb_recorrido recorrido, void **array,
 		    size_t tamanio_array)
 {
-	if (abb_vacio(arbol) || array == NULL)
-		return 0;
-
-	size_t cant_elementos_iterados = 0;
-
-	switch (recorrido) {
-	case INORDEN:
-		cant_elementos_iterados = inorden_recorrer(
-			arbol->nodo_raiz, arbol->tamanio, array, tamanio_array);
-		break;
-	case PREORDEN:
-		cant_elementos_iterados = preorden_recorrer(
-			arbol->nodo_raiz, arbol->tamanio, array, tamanio_array);
-		break;
-	case POSTORDEN:
-		cant_elementos_iterados = postorden_recorrer(
-			arbol->nodo_raiz, arbol->tamanio, array, tamanio_array);
-		break;
-	}
-
-	return cant_elementos_iterados;
+	size_t contador = 0;
+	if (arbol && array)
+		abb_recorrer_rec(arbol->nodo_raiz, recorrido, array,
+				 tamanio_array, &contador);
+	return contador;
 }
