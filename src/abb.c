@@ -150,6 +150,15 @@ void *abb_quitar(abb_t *arbol, void *elemento)
 		return NULL;
 	if (!elemento)
 		return NULL;
+
+	if (arbol->tamanio == 1) {
+		void *aux = arbol->nodo_raiz->elemento;
+		free(arbol->nodo_raiz);
+		arbol->nodo_raiz = NULL;
+		arbol->tamanio = 0;
+		return aux;
+	}
+
 	(arbol->tamanio)--;
 	return arbol_borrar_recursivo(arbol, elemento, &(arbol->nodo_raiz));
 }
@@ -253,17 +262,26 @@ size_t inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		return 0;
 
 	size_t iteraciones = 0;
+	bool continuar_iteracion = false;
 
-	if (nodo->izquierda)
+	if (nodo->izquierda) {
 		iteraciones += inorden_con_cada_elemento(nodo->izquierda,
 							 tamanio, funcion, aux);
+		if (continuar_iteracion)
+			return iteraciones;
+	}
 
-	funcion(nodo->elemento, aux);
+	if (!funcion(nodo->elemento, aux))
+		continuar_iteracion = true;
+
 	iteraciones++;
 
-	if (nodo->derecha)
+	if (nodo->derecha) {
 		iteraciones += inorden_con_cada_elemento(nodo->derecha, tamanio,
 							 funcion, aux);
+		if (continuar_iteracion)
+			return iteraciones;
+	}
 
 	return iteraciones;
 }
@@ -276,17 +294,26 @@ size_t preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		return 0;
 
 	size_t iteraciones = 0;
+	bool continuar_iteracion = false;
 
-	funcion(nodo->elemento, aux);
+	if (!funcion(nodo->elemento, aux))
+		continuar_iteracion = true;
+
 	iteraciones++;
 
-	if (nodo->izquierda)
+	if (nodo->izquierda) {
 		iteraciones += preorden_con_cada_elemento(
 			nodo->izquierda, tamanio, funcion, aux);
+		if (continuar_iteracion)
+			return iteraciones;
+	}
 
-	if (nodo->derecha)
+	if (nodo->derecha) {
 		iteraciones += preorden_con_cada_elemento(
 			nodo->derecha, tamanio, funcion, aux);
+		if (continuar_iteracion)
+			return iteraciones;
+	}
 
 	return iteraciones;
 }
@@ -299,16 +326,25 @@ size_t postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		return 0;
 
 	size_t iteraciones = 0;
+	bool continuar_iteracion = false;
 
-	if (nodo->izquierda)
+	if (nodo->izquierda) {
 		iteraciones += postorden_con_cada_elemento(
 			nodo->izquierda, tamanio, funcion, aux);
+		if (continuar_iteracion)
+			return iteraciones;
+	}
 
-	if (nodo->derecha)
+	if (nodo->derecha) {
 		iteraciones += postorden_con_cada_elemento(
 			nodo->derecha, tamanio, funcion, aux);
+		if (continuar_iteracion)
+			return iteraciones;
+	}
 
-	funcion(nodo->elemento, aux);
+	if (!funcion(nodo->elemento, aux))
+		continuar_iteracion = true;
+
 	iteraciones++;
 
 	return iteraciones;
