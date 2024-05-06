@@ -268,6 +268,107 @@ void abb_con_cada_elemento_funcionalidad()
 	printf("\n	Postorden: ");
 	abb_con_cada_elemento(abb, POSTORDEN, imprimir_abb_con_cada_elemento,
 			      NULL);
+	printf("\n\n");
+
+	destruir_elemento(prueba_1);
+	destruir_elemento(prueba_2);
+	destruir_elemento(prueba_3);
+	destruir_elemento(prueba_4);
+	destruir_elemento(prueba_5);
+	destruir_elemento(prueba_6);
+	destruir_elemento(prueba_7);
+
+	abb_destruir(abb);
+}
+
+bool vectores_iguales(void **elem1, void **elem2, size_t tope)
+{
+	bool son_iguales = true;
+	for (int i = 0; i < tope; i++) {
+		son_iguales =
+			(son_iguales && (*(int *)elem1[i] == *(int *)elem2[i]));
+	}
+	return son_iguales;
+}
+
+void abb_recorrer_funcionalidad()
+{
+	abb_t *abb = abb_crear(comparador);
+
+	cosa_t *prueba_1 = crear_cosa(1);
+	cosa_t *prueba_2 = crear_cosa(2);
+	cosa_t *prueba_3 = crear_cosa(3);
+	cosa_t *prueba_4 = crear_cosa(4);
+	cosa_t *prueba_5 = crear_cosa(5);
+	cosa_t *prueba_6 = crear_cosa(6);
+	cosa_t *prueba_7 = crear_cosa(7);
+
+	abb_insertar(abb, prueba_3);
+	abb_insertar(abb, prueba_2);
+	abb_insertar(abb, prueba_1);
+	abb_insertar(abb, prueba_6);
+	abb_insertar(abb, prueba_4);
+	abb_insertar(abb, prueba_5);
+	abb_insertar(abb, prueba_7);
+
+	int aux_inorden[] = { 1, 2, 3, 4, 5, 6, 7 };
+	int aux_preorden[] = { 3, 2, 1, 6, 4, 5, 7 };
+	int aux_postorden[] = { 1, 2, 5, 4, 7, 6, 3 };
+
+	void **vector_inorden = malloc(sizeof(void *) * 7);
+	void **vector_preorden = malloc(sizeof(void *) * 7);
+	void **vector_postorden = malloc(sizeof(void *) * 7);
+	for (int i = 0; i < 7; i++) {
+		vector_inorden[i] = (void *)&aux_inorden[i];
+		vector_preorden[i] = (void *)&aux_preorden[i];
+		vector_postorden[i] = (void *)&aux_postorden[i];
+	}
+
+	void **array_inorden = malloc(sizeof(void *) * 7);
+	void **array_preorden = malloc(sizeof(void *) * 7);
+	void **array_postorden = malloc(sizeof(void *) * 7);
+	size_t contador = 0;
+
+	printf("\nRecorrido de árbol completo:\n");
+	contador = abb_recorrer(abb, INORDEN, array_inorden, 7);
+	pa2m_afirmar(contador == 7 &&
+			     vectores_iguales(vector_inorden, array_inorden, 7),
+		     "Recorrido completo inorden funciona correctamente.");
+
+	contador = abb_recorrer(abb, PREORDEN, array_preorden, 7);
+	pa2m_afirmar(contador == 7 && vectores_iguales(vector_preorden,
+						       array_preorden, 7),
+		     "Recorrido completo preorden funciona correctamente.");
+
+	contador = abb_recorrer(abb, POSTORDEN, array_postorden, 7);
+	pa2m_afirmar(contador == 7 && vectores_iguales(vector_postorden,
+						       array_postorden, 7),
+		     "Recorrido completo postorden funciona correctamente.");
+
+	printf("\n");
+
+	printf("\nRecorrido de parte del árbol:\n");
+	contador = abb_recorrer(abb, INORDEN, array_inorden, 5);
+	pa2m_afirmar(contador == 5 &&
+			     vectores_iguales(vector_inorden, array_inorden, 5),
+		     "Recorrido de parte inorden funciona correctamente.");
+
+	contador = abb_recorrer(abb, PREORDEN, array_preorden, 5);
+	pa2m_afirmar(contador == 5 && vectores_iguales(vector_preorden,
+						       array_preorden, 5),
+		     "Recorrido de parte preorden funciona correctamente.");
+
+	contador = abb_recorrer(abb, POSTORDEN, array_postorden, 5);
+	pa2m_afirmar(contador == 5 && vectores_iguales(vector_postorden,
+						       array_postorden, 5),
+		     "Recorrido de parte postorden funciona correctamente.");
+
+	free(vector_inorden);
+	free(vector_preorden);
+	free(vector_postorden);
+	free(array_inorden);
+	free(array_preorden);
+	free(array_postorden);
 
 	destruir_elemento(prueba_1);
 	destruir_elemento(prueba_2);
@@ -301,6 +402,7 @@ int main()
 	pa2m_nuevo_grupo(
 		"\n======================== Pruebas recorrer ========================");
 	abb_con_cada_elemento_funcionalidad();
+	abb_recorrer_funcionalidad();
 
 	pa2m_nuevo_grupo(
 		"\n======================== Pruebas destruir todo ========================");
