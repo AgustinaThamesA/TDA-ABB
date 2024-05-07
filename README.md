@@ -140,3 +140,33 @@ La **eliminación** (tomándose como ejemplo un árbol que tiene números entero
 
 
 ### 2. Explique su implementación y decisiones de diseño (por ejemplo, si tal o cuál funciones se plantearon de forma recursiva, iterativa o mixta y por qué, que dificultades encontró al manejar los nodos y punteros, reservar y liberar memoria, etc).
+
+En líneas generales, considero que el código fue implementado mediante un buen manejo de nodos y punteros. En cuanto a la memoria, la dificultad generalmente aparecía en las pruebas, pero con la ejecución del código por Valgrind, se podían solucionar los errores de liberación de memoria.
+
+#### Estructuras de Datos Utilizadas:
+- **Nodo del Árbol (`nodo_abb_t`)**: Contiene un puntero al elemento que contiene, así como punteros a los hijos izquierdo y derecho.
+- **Árbol Binario de Búsqueda (`abb_t`)**: Estructura principal que contiene un puntero a la raíz, el tamaño del árbol y una función comparadora.
+
+#### Funciones Principales y Recursión:
+La recursión ayuda a que mi código no utilice tantas estructuras iterativas, para lograr una mejor comprensión del código, y poder manejar las condiciones más fácilmente.
+- **Inserción Recursiva**: `abb_insertar_recursivo` utiliza un enfoque recursivo para insertar elementos.
+- **Borrado Recursivo**: `arbol_borrar_recursivo` elimina nodos recursivamente.
+- **Recorrido Recursivo**: Funciones como `inorden_con_cada_elemento` utilizan la recursión para recorrer el árbol.
+
+#### Estrategias de Borrado:
+Fueron separados los 3 casos para que la implementación sea máz eficaz.
+- **Borrado de Hojas**: `borrar_hoja` libera la memoria de un nodo hoja.
+- **Borrado con 1 Hijo**: `borrar_1_hijo` maneja nodos con un solo hijo.
+- **Borrado con 2 Hijos**: `borrar_2_hijos` aborda el caso de nodos con dos hijos.
+
+#### Liberación de Memoria:
+- **Destructor del Árbol y Nodos**: Funciones como `abb_destruir` y `abb_destruir_todo` liberan la memoria del abb correctamente. Luego el abb queda vacío.
+
+#### Decisiones de Manejo de Punteros y Nodos:
+- **Punteros Dobles**: Se utilizan punteros dobles en las funciones de borrado para modificar el puntero al nodo padre.
+- **Validación de Punteros**: Se verifican los punteros pasados a las funciones para prevenir problemas de segmentación.
+- **Asignación de Nodos**: Se asigna memoria dinámicamente para los nuevos nodos y se verifica la asignación.
+
+#### Optimizaciones y Consideraciones:
+- **Manejo de Tamaño del Árbol**: Se mantiene un contador de tamaño del árbol para operaciones eficientes.
+- **Funciones de Recorrido Personalizables**: Se proporcionan funciones de recorrido que permiten al usuario especificar operaciones personalizadas en cada nodo.
