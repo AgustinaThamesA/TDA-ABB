@@ -63,93 +63,103 @@ abb_t *abb_insertar(abb_t *arbol, void *elemento)
 	(arbol->tamanio)++;
 	return arbol;
 }
+
 void borrar_hoja(nodo_abb_t **nodo)
 {
-	if (*nodo) {
-		free(*nodo);
-		*nodo = NULL;
-	}
+	nodo_abb_t *aux = (*nodo);
+	free(aux);
+	(*nodo) = NULL;
+	return;
 }
 
 void borrar_1_hijo(nodo_abb_t **nodo)
 {
-	if (*nodo) {
-		nodo_abb_t *aux = *nodo;
-		if (!aux->izquierda) {
-			*nodo = aux->derecha;
-		} else {
-			*nodo = aux->izquierda;
-		}
+	nodo_abb_t *aux = (*nodo);
+	if (!(*nodo)->izquierda) {
+		(*nodo) = aux->derecha;
 		free(aux);
+		return;
+	}
+	if (!(*nodo)->derecha) {
+		(*nodo) = aux->izquierda;
+		free(aux);
+		return;
 	}
 }
 
 void borrar_2_hijos(nodo_abb_t **nodo)
 {
-	if (*nodo) {
-		nodo_abb_t *aux = *nodo;
-		nodo_abb_t **sucesor = &(aux->izquierda);
+	nodo_abb_t *aux = (*nodo);
+	nodo_abb_t **sucesor = &(aux->izquierda);
 
-		while ((*sucesor)->derecha) {
-			sucesor = &(*sucesor)->derecha;
-		}
-
-		nodo_abb_t *temp = *sucesor;
-		*sucesor = (*sucesor)->izquierda;
-		temp->izquierda = aux->izquierda;
-		temp->derecha = aux->derecha;
+	if (!(*sucesor)->derecha) {
+		(*sucesor)->derecha = aux->derecha;
+		(*nodo) = (*sucesor);
 		free(aux);
-		*nodo = temp;
+		return;
 	}
+	while ((*sucesor)->derecha) {
+		sucesor = &(*sucesor)->derecha;
+	}
+	(*nodo) = (*sucesor);
+	(*sucesor) = (*sucesor)->izquierda;
+	(*nodo)->izquierda = aux->izquierda;
+	(*nodo)->derecha = aux->derecha;
+	free(aux);
 }
 
 void borrar_nodo(nodo_abb_t **nodo)
 {
-	if (*nodo) {
-		if (!(*nodo)->izquierda && !(*nodo)->derecha) {
-			borrar_hoja(nodo);
-		} else if (!(*nodo)->izquierda || !(*nodo)->derecha) {
-			borrar_1_hijo(nodo);
-		} else {
-			borrar_2_hijos(nodo);
-		}
+	if (!(*nodo)->izquierda && !(*nodo)->derecha) {
+		borrar_hoja(nodo);
+		return;
 	}
+
+	if (!(*nodo)->izquierda || !(*nodo)->derecha) {
+		borrar_1_hijo(nodo);
+		return;
+	}
+
+	borrar_2_hijos(nodo);
 }
 
 void *arbol_borrar_recursivo(abb_t *arbol, void *elemento, nodo_abb_t **nodo)
 {
-	if (!arbol || !arbol->comparador || !nodo || !*nodo) {
+	if (!arbol || !arbol->comparador)
 		return NULL;
-	}
+	if (!nodo || !*nodo)
+		return NULL;
 
-	if (arbol->comparador(elemento, (*nodo)->elemento) == 0) {
+	if (!(arbol->comparador)(elemento, (*nodo)->elemento)) {
+		(arbol->comparador)((*nodo)->elemento, elemento);
 		void *aux = (*nodo)->elemento;
 		borrar_nodo(nodo);
 		return aux;
-	} else if (arbol->comparador(elemento, (*nodo)->elemento) > 0) {
-		return arbol_borrar_recursivo(arbol, elemento,
-					      &(*nodo)->derecha);
-	} else {
-		return arbol_borrar_recursivo(arbol, elemento,
-					      &(*nodo)->izquierda);
 	}
+
+	if ((arbol->comparador)(elemento, (*nodo)->elemento) >= 0)
+		return arbol_borrar_recursivo(arbol, elemento,
+					      &((*nodo)->derecha));
+
+	return arbol_borrar_recursivo(arbol, elemento, &((*nodo)->izquierda));
 }
 
 void *abb_quitar(abb_t *arbol, void *elemento)
 {
-	if (!arbol || !elemento || arbol->tamanio == 0) {
+	if (!arbol)
 		return NULL;
-	}
+	if (!elemento)
+		return NULL;
 
 	if (arbol->tamanio == 1) {
 		void *aux = arbol->nodo_raiz->elemento;
-		free(arbol->nodo_raiz);
-		arbol->nodo_raiz = NULL;
+		borrar_nodo(&(arbol->nodo_raiz));
 		arbol->tamanio = 0;
+
 		return aux;
 	}
 
-	arbol->tamanio--;
+	(arbol->tamanio)--;
 	return arbol_borrar_recursivo(arbol, elemento, &(arbol->nodo_raiz));
 }
 
@@ -243,7 +253,6 @@ void abb_destruir_todo(abb_t *arbol, void (*destructor)(void *))
 	free(arbol);
 	arbol = NULL;
 }
-
 size_t inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 				 bool (*funcion)(void *, void *), void *aux)
 {

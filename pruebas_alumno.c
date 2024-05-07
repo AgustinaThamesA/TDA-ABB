@@ -196,6 +196,13 @@ void pruebas_borrar()
 			     *(int *)elemento_eliminado == prueba_4->clave,
 		     "Saca correctamente el elemento 4 (una hoja).");
 
+	abb_quitar(abb, &prueba_5->clave);
+	abb_quitar(abb, &prueba_2->clave);
+	abb_quitar(abb, &prueba_1->clave);
+
+	pa2m_afirmar(abb_vacio(abb),
+		     "Se eliminan todos los elementos, abb vacío!");
+
 	destruir_elemento(prueba_1);
 	destruir_elemento(prueba_2);
 	destruir_elemento(prueba_3);
