@@ -155,7 +155,7 @@ void *abb_quitar(abb_t *arbol, void *elemento)
 		void *aux = arbol->nodo_raiz->elemento;
 		borrar_nodo(&(arbol->nodo_raiz));
 		arbol->tamanio = 0;
-
+		arbol->nodo_raiz = NULL;
 		return aux;
 	}
 
