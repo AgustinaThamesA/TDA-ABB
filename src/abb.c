@@ -148,17 +148,9 @@ void *abb_quitar(abb_t *arbol, void *elemento)
 {
 	if (!arbol)
 		return NULL;
-	if (!elemento)
+	/*if (!elemento)
 		return NULL;
-
-	if (arbol->tamanio == 1) {
-		void *aux = arbol->nodo_raiz->elemento;
-		borrar_nodo(&(arbol->nodo_raiz));
-		arbol->tamanio = 0;
-		arbol->nodo_raiz = NULL;
-		return aux;
-	}
-
+	*/
 	(arbol->tamanio)--;
 	return arbol_borrar_recursivo(arbol, elemento, &(arbol->nodo_raiz));
 }
@@ -181,7 +173,7 @@ void *buscar_nodo_abb(nodo_abb_t *nodo, void *elemento,
 
 void *abb_buscar(abb_t *arbol, void *elemento)
 {
-	if (arbol == NULL || arbol->comparador == NULL)
+	if (arbol == NULL || arbol->comparador == NULL || elemento == NULL)
 		return NULL;
 	return buscar_nodo_abb(arbol->nodo_raiz, elemento, arbol->comparador);
 }
@@ -253,6 +245,7 @@ void abb_destruir_todo(abb_t *arbol, void (*destructor)(void *))
 	free(arbol);
 	arbol = NULL;
 }
+
 size_t inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 				 bool (*funcion)(void *, void *), void *aux)
 {
@@ -265,10 +258,8 @@ size_t inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 		iteraciones += inorden_con_cada_elemento(nodo->izquierda,
 							 tamanio, funcion, aux);
 
-	if (!funcion(nodo->elemento, aux))
-		return iteraciones;
-
 	iteraciones++;
+	funcion(nodo->elemento, aux);
 
 	if (nodo->derecha)
 		iteraciones += inorden_con_cada_elemento(nodo->derecha, tamanio,
@@ -285,10 +276,8 @@ size_t preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 
 	size_t iteraciones = 0;
 
-	if (!funcion(nodo->elemento, aux))
-		return iteraciones;
-
 	iteraciones++;
+	funcion(nodo->elemento, aux);
 
 	if (nodo->izquierda)
 		iteraciones += preorden_con_cada_elemento(
@@ -316,11 +305,10 @@ size_t postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 	if (nodo->derecha)
 		iteraciones += postorden_con_cada_elemento(
 			nodo->derecha, tamanio, funcion, aux);
-
-	if (!funcion(nodo->elemento, aux))
-		return iteraciones;
-
+	
 	iteraciones++;
+	funcion(nodo->elemento, aux);
+	
 
 	return iteraciones;
 }
