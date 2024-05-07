@@ -2,30 +2,50 @@
 
 ## Repositorio de Agustina Thames Alderete - 111287 - athames@fi.uba.ar
 
-- Para compilar:
+A la hora de correr el programa, yo utilicé la línea para compilar y la línea de ejecución con valgrind, ya que el makefile ya tenía incorporada una forma más eficiente de hacerlo.
+
+- Para ejecutar con valgrind usando mis pruebas:
 
 ```bash
-línea de compilación
+make valgrind-alumno
 ```
 
-- Para ejecutar:
-
+- Para ejecutar con valgrind usando el archivo de ejemplo dado por la cátedra:
 ```bash
-línea de ejecución
-```
-
-- Para ejecutar con valgrind:
-```bash
-línea con valgrind
+make 
 ```
 ---
 ##  Funcionamiento
 
-Explicación de cómo funcionan las estructuras desarrolladas en el TP y el funcionamiento general del mismo.
+### Funcionamiento general del programa:
 
-Aclarar en esta parte todas las decisiones que se tomaron al realizar el TP, cosas que no se aclaren en el enunciado, fragmentos de código que necesiten explicación extra, etc.
+En este TP se implementa el Árbol Binario de Búsqueda (ABB). Fueron desarrolladas las funciones especificadas en el archivo abb.h, y se crearon algunas nuevas para favorecer la implementación del TDA. En su mayoría, se utilizaron estructuras recursivas para facilitar la redacción y comprensión del código. Las operaciones generales, que se pueden hacer con los elementos del abb ó con el abb, implementadas son: crear, insertar, borrar, buscar, recorrer y destruir. El resto de las funciones son empleadas en las funciones generales (y en las pruebas) para comprobar casos bordes, o hasta formar una condición.
 
-Incluír **EN TODOS LOS TPS** los diagramas relevantes al problema (mayormente diagramas de memoria para explicar las estructuras, pero se pueden utilizar otros diagramas si es necesario).
+Una explicación a grandes rasgos de lo que hace mi implementación del TDA-ABB es:
+- **nodo_crear**: función para crear un nuevo nodo, guardando el elemento pasado como parámetro y otros dos espacios para guardar los nodos izquierdo y derecho. Al finalizar todo, devuelve el nodo vacío.
+- **abb_crear**: función para crear un nuevo abb, guardando el comparador, e inicializando el tamaño del mismo. Al finalizar todo, devuelve el abb vacío.
+- **abb_insertar_recursivo**: función recursiva para insertar un elemento en el árbol. Busca la posición adecuada según el comparador y agrega el nuevo nodo.
+- **abb_insertar**: función principal para insertar un elemento en el abb. Llama a abb_insertar_recursivo y actualiza el tamaño del árbol.
+- **borrar_hoja, borrar_1_hijo, borrar_2_hijos, borrar_nodo**: son funciones auxiliares utilizadas para borrar nodos del abb, teniendo en cuenta diferentes casos (sin hijos, un hijo, dos hijos).
+- **arbol_borrar_recursivo**: función recursiva para borrar un nodo del abb.
+- **abb_quitar**: función principal para quitar un elemento del abb. Llama a arbol_borrar_recursivo y actualiza el tamaño del árbol.
+- **buscar_nodo_abb**: función recursiva para buscar un elemento en el abb.
+- **abb_buscar**: función principal para buscar un elemento en el abb. Llama a buscar_nodo_abb.
+- **abb_vacio, abb_tamanio**: funciones para verificar si el árbol está vacío y obtener su tamaño.
+- **destruir_nodo_abb**: función para destruir un nodo del abb.
+- **abb_destruir**: función principal para destruir el abb, liberando memoria de todos los nodos.
+- **destruir_todo_nodo_abb**: función para destruir un nodo del abb y sus elementos utilizando un destructor.
+- **abb_destruir_todo**: función principal para destruir el abb y sus elementos utilizando un destructor.
+inorden_con_cada_elemento, preorden_con_cada_elemento, postorden_con_cada_elemento: Funciones auxiliares para realizar un recorrido inorden, preorden o postorden del abb, aplicando una función a cada elemento.
+- **abb_con_cada_elemento**: función principal para recorrer el abb en un orden específico y aplicar una función a cada elemento.
+inorden_recorrer, preorden_recorrer, postorden_recorrer: Funciones auxiliares para realizar un recorrido inorden, preorden o postorden del abb y almacenar los elementos en un arreglo.
+- **abb_recorrer_rec**: función recursiva para recorrer el abb en un orden específico y almacenar los elementos en un arreglo.
+- **abb_recorrer**: función principal para recorrer el abb en un orden específico y almacenar los elementos en un arreglo.
+
+### Diagramas relevantes:
+
+
+
 
 ### Por ejemplo:
 
