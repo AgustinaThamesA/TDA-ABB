@@ -203,6 +203,17 @@ void pruebas_borrar()
 	pa2m_afirmar(abb_vacio(abb),
 		     "Se eliminan todos los elementos, abb vacío!");
 
+	pa2m_afirmar(abb_quitar(abb, &prueba_1->clave) == NULL,
+		     "No se puede eliminar un elemento en un abb NULL");
+
+	abb_insertar(abb, prueba_5);
+	pa2m_afirmar(
+		!abb_vacio(abb),
+		"Cuando se agrega un elemento al abb vacío, ya no lo está.");
+	pa2m_afirmar(
+		abb_tamanio(abb) == 1,
+		"Cuando se agrega un elemento al abb vacío, el tamaño actualiza a 1.");
+
 	destruir_elemento(prueba_1);
 	destruir_elemento(prueba_2);
 	destruir_elemento(prueba_3);

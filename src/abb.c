@@ -146,11 +146,9 @@ void *arbol_borrar_recursivo(abb_t *arbol, void *elemento, nodo_abb_t **nodo)
 
 void *abb_quitar(abb_t *arbol, void *elemento)
 {
-	if (!arbol)
+	if (abb_vacio(arbol))
 		return NULL;
-	/*if (!elemento)
-		return NULL;
-	*/
+
 	(arbol->tamanio)--;
 	return arbol_borrar_recursivo(arbol, elemento, &(arbol->nodo_raiz));
 }
@@ -274,7 +272,7 @@ void preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 {
 	if (nodo == NULL)
 		return;
-	
+
 	bool continua_iterando = funcion(nodo->elemento, aux);
 
 	if (continua_iterando == true)
@@ -305,7 +303,7 @@ void postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 	if (nodo->derecha)
 		postorden_con_cada_elemento(nodo->derecha, tamanio, funcion,
 					    aux, iteraciones);
-	
+
 	bool continua_iterando = funcion(nodo->elemento, aux);
 
 	if (continua_iterando == true)
