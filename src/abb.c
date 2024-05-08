@@ -246,71 +246,70 @@ void abb_destruir_todo(abb_t *arbol, void (*destructor)(void *))
 	arbol = NULL;
 }
 
-size_t inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
-				 bool (*funcion)(void *, void *), void *aux)
+void inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
+			       bool (*funcion)(void *, void *), void *aux,
+			       size_t *iteraciones)
 {
 	if (nodo == NULL)
-		return 0;
-
-	size_t iteraciones = 0;
+		return;
 
 	if (nodo->izquierda)
-		iteraciones += inorden_con_cada_elemento(nodo->izquierda,
-							 tamanio, funcion, aux);
+		inorden_con_cada_elemento(nodo->izquierda, tamanio, funcion,
+					  aux, iteraciones);
 
-	iteraciones++;
-	funcion(nodo->elemento, aux);
+	bool continua_iterando = funcion(nodo->elemento, aux);
+	if (continua_iterando == false)
+		return;
+
+	(*iteraciones)++;
 
 	if (nodo->derecha)
-		iteraciones += inorden_con_cada_elemento(nodo->derecha, tamanio,
-							 funcion, aux);
-
-	return iteraciones;
+		inorden_con_cada_elemento(nodo->derecha, tamanio, funcion, aux,
+					  iteraciones);
 }
 
-size_t preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
-				  bool (*funcion)(void *, void *), void *aux)
+void preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
+				bool (*funcion)(void *, void *), void *aux,
+				size_t *iteraciones)
 {
 	if (nodo == NULL)
-		return 0;
+		return;
 
-	size_t iteraciones = 0;
+	bool continua_iterando = funcion(nodo->elemento, aux);
+	if (continua_iterando == false)
+		return;
 
-	iteraciones++;
-	funcion(nodo->elemento, aux);
+	(*iteraciones)++;
 
 	if (nodo->izquierda)
-		iteraciones += preorden_con_cada_elemento(
-			nodo->izquierda, tamanio, funcion, aux);
+		preorden_con_cada_elemento(nodo->izquierda, tamanio, funcion,
+					   aux, iteraciones);
 
 	if (nodo->derecha)
-		iteraciones += preorden_con_cada_elemento(
-			nodo->derecha, tamanio, funcion, aux);
-
-	return iteraciones;
+		preorden_con_cada_elemento(nodo->derecha, tamanio, funcion, aux,
+					   iteraciones);
 }
 
-size_t postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
-				   bool (*funcion)(void *, void *), void *aux)
+void postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
+				 bool (*funcion)(void *, void *), void *aux,
+				 size_t *iteraciones)
 {
 	if (nodo == NULL)
-		return 0;
-
-	size_t iteraciones = 0;
+		return;
 
 	if (nodo->izquierda)
-		iteraciones += postorden_con_cada_elemento(
-			nodo->izquierda, tamanio, funcion, aux);
+		postorden_con_cada_elemento(nodo->izquierda, tamanio, funcion,
+					    aux, iteraciones);
 
 	if (nodo->derecha)
-		iteraciones += postorden_con_cada_elemento(
-			nodo->derecha, tamanio, funcion, aux);
-	
-	iteraciones++;
-	funcion(nodo->elemento, aux);
-	
+		postorden_con_cada_elemento(nodo->derecha, tamanio, funcion,
+					    aux, iteraciones);
 
-	return iteraciones;
+	bool continua_iterando = funcion(nodo->elemento, aux);
+	if (continua_iterando == false)
+		return;
+
+	(*iteraciones)++;
 }
 
 size_t abb_con_cada_elemento(abb_t *arbol, abb_recorrido recorrido,
@@ -319,24 +318,24 @@ size_t abb_con_cada_elemento(abb_t *arbol, abb_recorrido recorrido,
 	if (abb_vacio(arbol) || funcion == NULL)
 		return 0;
 
-	size_t cant_elementos_iterados = 0;
+	size_t iteraciones = 0;
 
 	switch (recorrido) {
 	case INORDEN:
-		cant_elementos_iterados = inorden_con_cada_elemento(
-			arbol->nodo_raiz, arbol->tamanio, funcion, aux);
+		inorden_con_cada_elemento(arbol->nodo_raiz, arbol->tamanio,
+					  funcion, aux, &iteraciones);
 		break;
 	case PREORDEN:
-		cant_elementos_iterados = preorden_con_cada_elemento(
-			arbol->nodo_raiz, arbol->tamanio, funcion, aux);
+		preorden_con_cada_elemento(arbol->nodo_raiz, arbol->tamanio,
+					   funcion, aux, &iteraciones);
 		break;
 	case POSTORDEN:
-		cant_elementos_iterados = postorden_con_cada_elemento(
-			arbol->nodo_raiz, arbol->tamanio, funcion, aux);
+		postorden_con_cada_elemento(arbol->nodo_raiz, arbol->tamanio,
+					    funcion, aux, &iteraciones);
 		break;
 	}
 
-	return cant_elementos_iterados;
+	return iteraciones;
 }
 
 void inorden_recorrer(nodo_abb_t *nodo_actual, void **array,
