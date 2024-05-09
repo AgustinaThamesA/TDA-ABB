@@ -126,6 +126,7 @@ La **eliminación** (tomándose como ejemplo un árbol que tiene números entero
 - *Borrar Nodo con un Hijo*: hago que el nodo anterior al que quiero borrar apunte al nodo hijo, y luego libero la memoria del nodo que se desea.
 - *Borrar Nodo con dos Hijos*: en este caso, elijo el sucesor o antecesro inmediato al número más cercano al que quiero borrar. Para encontrar el antecesor, voy a la rama izquierda y después todo a la derecha hasta encontrar una hoja (el antecesor). Por el contrario, para encontrar el sucesor, voy a la rama derecha y después todo a la izquierda hasta encontrar una hoja (el sucesor). El nodo encontrado es el que va a reemplazar al nodo a borrar. Por último, hago libero la memoria correspondiente.
 
+- La complejidad de las operaciones mencionadas anteriormente en un ABB, es: **O(log(n))** ó O(n) en el caso de que el árbol esté desbalanceado. 
 
 ### 2. Explique su implementación y decisiones de diseño (por ejemplo, si tal o cuál funciones se plantearon de forma recursiva, iterativa o mixta y por qué, que dificultades encontró al manejar los nodos y punteros, reservar y liberar memoria, etc).
 
