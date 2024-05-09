@@ -19,7 +19,7 @@ make
 
 ### Funcionamiento general del programa:
 
-En este TP se implementa el Árbol Binario de Búsqueda (ABB). Fueron desarrolladas las funciones especificadas en el archivo abb.h, y se crearon algunas nuevas para favorecer la implementación del TDA. En su mayoría, se utilizaron estructuras recursivas para facilitar la redacción y comprensión del código. Las operaciones generales, que se pueden hacer con los elementos del abb ó con el abb, implementadas son: crear, insertar, borrar, buscar, recorrer y destruir. El resto de las funciones son empleadas en las funciones generales (y en las pruebas) para comprobar casos bordes, o hasta formar una condición.
+En este TDA se implementa el Árbol Binario de Búsqueda (ABB). Fueron desarrolladas las funciones especificadas en el archivo abb.h, y se crearon algunas nuevas para favorecer la implementación del TDA. En su mayoría, se utilizaron estructuras recursivas para facilitar la redacción y comprensión del código. Las operaciones generales, que se pueden hacer con los elementos del abb ó con el abb, implementadas son: crear, insertar, borrar, buscar, recorrer y destruir. El resto de las funciones son empleadas en las funciones generales (y en las pruebas) para comprobar casos bordes, o hasta formar una condición.
 
 Una explicación a grandes rasgos de lo que hace mi implementación del TDA-ABB es:
 - **nodo_crear**: función para crear un nuevo nodo, guardando el elemento pasado como parámetro y otros dos espacios para guardar los nodos izquierdo y derecho. Al finalizar todo, devuelve el nodo vacío.
@@ -56,29 +56,6 @@ Por el otro, un diagrama que logra graficar cómo se utiliza el espacio de memor
 
 <div align="center">
 <img width="70%" src="img/stack_heap_abb.drawio.svg">
-</div>
-
-### Por ejemplo:
-
-El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
-
-<div align="center">
-<img width="70%" src="img/diagrama1.svg">
-</div>
-
-En el archivo `sarasa.c` la función `funcion1` utiliza `realloc` para agrandar la zona de memoria utilizada para conquistar el mundo. El resultado de `realloc` lo guardo en una variable auxiliar para no perder el puntero original en caso de error:
-
-```c
-int *vector = realloc(vector_original, (n+1)*sizeof(int));
-
-if(vector == NULL)
-    return -1;
-vector_original = vector;
-```
-
-
-<div align="center">
-<img width="70%" src="img/diagrama2.svg">
 </div>
 
 ---
