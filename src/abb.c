@@ -282,10 +282,10 @@ bool preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 	if (nodo == NULL)
 		return true;
 
+	(*iteraciones)++;
+
 	if (funcion(nodo->elemento, aux) == false)
 		return false;
-
-	(*iteraciones)++;
 
 	bool continua_iterando = preorden_con_cada_elemento(
 		nodo->izquierda, tamanio, funcion, aux, iteraciones);
