@@ -250,6 +250,8 @@ void abb_destruir_todo_funcionalidad()
 
 bool imprimir_abb_con_cada_elemento(void *elemento, void *aux)
 {
+	if (*(int *)elemento > 4)
+		return false;
 	printf("%d ", *(int *)elemento);
 	return true;
 }
@@ -276,16 +278,19 @@ void abb_con_cada_elemento_funcionalidad()
 
 	printf("Iteraciones de abb_con_cada_elemento:");
 	printf("\n	Inorden: ");
-	abb_con_cada_elemento(abb, INORDEN, imprimir_abb_con_cada_elemento,
-			      NULL);
+	size_t iteraciones = abb_con_cada_elemento(
+		abb, INORDEN, imprimir_abb_con_cada_elemento, NULL);
+	printf("	Iteraciones: %ld \n", iteraciones);
 
 	printf("\n	Preorden: ");
-	abb_con_cada_elemento(abb, PREORDEN, imprimir_abb_con_cada_elemento,
-			      NULL);
+	iteraciones = abb_con_cada_elemento(
+		abb, PREORDEN, imprimir_abb_con_cada_elemento, NULL);
+	printf("	Iteraciones: %ld \n", iteraciones);
 
 	printf("\n	Postorden: ");
-	abb_con_cada_elemento(abb, POSTORDEN, imprimir_abb_con_cada_elemento,
-			      NULL);
+	iteraciones = abb_con_cada_elemento(
+		abb, POSTORDEN, imprimir_abb_con_cada_elemento, NULL);
+	printf("	Iteraciones: %ld \n", iteraciones);
 	printf("\n\n");
 
 	destruir_elemento(prueba_1);
