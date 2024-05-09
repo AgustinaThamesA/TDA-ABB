@@ -196,16 +196,21 @@ void pruebas_borrar()
 			     *(int *)elemento_eliminado == prueba_4->clave,
 		     "Saca correctamente el elemento 4 (una hoja).");
 
-	pa2m_afirmar(abb_quitar(abb, &prueba_6->clave) == NULL,
-		     "No se puede eliminar un elemento en un abb con 3 elementos.");
+	pa2m_afirmar(
+		abb_quitar(abb, &prueba_6->clave) == NULL,
+		"No se puede eliminar un elemento inexustente en un abb con 3 elementos.");
 
 	abb_quitar(abb, &prueba_5->clave);
-	abb_quitar(abb, &prueba_2->clave);
+
+	abb_quitar(abb, &prueba_7->clave);
+
 	abb_quitar(abb, &prueba_1->clave);
 
 	pa2m_afirmar(abb_vacio(abb),
 		     "Se eliminan todos los elementos, abb vacío!");
-	pa2m_afirmar(abb_tamanio(abb) == 0, "Tamaño 0 después de eliminar todos los elementos del abb.");
+	pa2m_afirmar(
+		abb_tamanio(abb) == 0,
+		"Tamaño 0 después de eliminar todos los elementos del abb.");
 
 	pa2m_afirmar(abb_quitar(abb, &prueba_1->clave) == NULL,
 		     "No se puede eliminar un elemento en un abb NULL.");
@@ -219,9 +224,12 @@ void pruebas_borrar()
 		abb_tamanio(abb) == 1,
 		"Cuando se agrega un elemento al abb vacío, el tamaño actualiza a 1.");
 
-	pa2m_afirmar(abb_quitar(abb, &prueba_2->clave) == NULL, "Si saco un elemento que no está en el abb, devuelve NULL.");
-	pa2m_afirmar(abb_tamanio(abb) == 1,
-		     "No se puede eliminar un elemento que no está en el abb.");
+	pa2m_afirmar(
+		abb_quitar(abb, &prueba_2->clave) == NULL,
+		"Si saco un elemento que no está en el abb, devuelve NULL.");
+	pa2m_afirmar(
+		abb_tamanio(abb) == 1,
+		"Chequea si Tamaño == 1. No se puede eliminar un elemento que no está en el abb.");
 
 	destruir_elemento(prueba_1);
 	destruir_elemento(prueba_2);
@@ -299,7 +307,7 @@ void abb_con_cada_elemento_funcionalidad()
 	printf("\n	Postorden: ");
 	iteraciones = abb_con_cada_elemento(
 		abb, POSTORDEN, imprimir_abb_con_cada_elemento, NULL);
-	printf("	Iteraciones: %ld \n", iteraciones);
+	printf("		Iteraciones: %ld \n", iteraciones);
 	printf("\n\n");
 
 	destruir_elemento(prueba_1);
