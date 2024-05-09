@@ -448,7 +448,5 @@ int main()
 		"\n======================== Pruebas destruir todo ========================");
 	abb_destruir_todo_funcionalidad();
 
-	// clang-format -i -style=file abb.c
-
 	return pa2m_mostrar_reporte();
 }

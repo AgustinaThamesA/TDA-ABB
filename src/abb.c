@@ -153,40 +153,6 @@ void *abb_quitar(abb_t *arbol, void *elemento)
 	(arbol->tamanio)--;
 	return arbol_borrar_recursivo(arbol, elemento, &(arbol->nodo_raiz));
 }
-/*
-void *arbol_borrar_recursivo(abb_t *arbol, void *elemento, nodo_abb_t **nodo, bool *restar_tamanio)
-{
-	if (!arbol || !arbol->comparador)
-		return NULL;
-	if (!nodo || !*nodo)
-		return NULL;
-
-	if ((arbol->comparador)(elemento, (*nodo)->elemento) == 0) {
-		void *aux = (*nodo)->elemento;
-		borrar_nodo(nodo);
-		*restar_tamanio = true;
-		return aux;
-	}
-
-	if ((arbol->comparador)(elemento, (*nodo)->elemento) >= 0)
-		return arbol_borrar_recursivo(arbol, elemento, &((*nodo)->derecha), restar_tamanio);
-
-	return arbol_borrar_recursivo(arbol, elemento, &((*nodo)->izquierda), restar_tamanio);
-}
-
-void *abb_quitar(abb_t *arbol, void *elemento)
-{
-	if (abb_vacio(arbol))
-		return NULL;
-
-	bool restar_tamanio = false;
-	void* aux = arbol_borrar_recursivo(arbol, elemento, &(arbol->nodo_raiz), &restar_tamanio);
-	if (restar_tamanio)
-		(arbol->tamanio)--;
-	return aux;
-}
-
-*/
 
 void *buscar_nodo_abb(nodo_abb_t *nodo, void *elemento,
 		      abb_comparador comparador)
