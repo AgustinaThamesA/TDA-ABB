@@ -244,6 +244,16 @@ void abb_destruir_todo(abb_t *arbol, void (*destructor)(void *))
 	arbol = NULL;
 }
 
+/*
+Vos deberias tener:
+If nodo == NULL (eso bien)
+bool continua = recorrer(izquierda)
+if(!continua) return false
+iteraciones++
+if(funcion == false) return false
+return recorrer(derecha)
+*/
+
 bool inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 			       bool (*funcion)(void *, void *), void *aux,
 			       size_t *iteraciones)
@@ -251,23 +261,18 @@ bool inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 	if (nodo == NULL)
 		return true;
 
-	bool continua_iterando = funcion(nodo->elemento, aux);
+	bool continua_iterando = inorden_con_cada_elemento(
+		nodo->izquierda, tamanio, funcion, aux, iteraciones);
 
-	if (nodo->izquierda)
-		continua_iterando = inorden_con_cada_elemento(
-			nodo->izquierda, tamanio, funcion, aux, iteraciones);
-
-	if (continua_iterando == false) {
+	if (!continua_iterando)
 		return false;
-	}
 
 	(*iteraciones)++;
+	if (funcion(nodo->elemento, aux) == false)
+		return false;
 
-	if (nodo->derecha)
-		continua_iterando = inorden_con_cada_elemento(
-			nodo->derecha, tamanio, funcion, aux, iteraciones);
-
-	return true;
+	return inorden_con_cada_elemento(nodo->derecha, tamanio, funcion, aux,
+					 iteraciones);
 }
 
 bool preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
@@ -277,22 +282,19 @@ bool preorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 	if (nodo == NULL)
 		return true;
 
-	bool continua_iterando = funcion(nodo->elemento, aux);
-
-	if (continua_iterando == false)
+	if (funcion(nodo->elemento, aux) == false)
 		return false;
 
 	(*iteraciones)++;
 
-	if (nodo->izquierda)
-		continua_iterando = preorden_con_cada_elemento(
-			nodo->izquierda, tamanio, funcion, aux, iteraciones);
+	bool continua_iterando = preorden_con_cada_elemento(
+		nodo->izquierda, tamanio, funcion, aux, iteraciones);
 
-	if (nodo->derecha)
-		continua_iterando = preorden_con_cada_elemento(
-			nodo->derecha, tamanio, funcion, aux, iteraciones);
+	if (!continua_iterando)
+		return false;
 
-	return true;
+	return preorden_con_cada_elemento(nodo->derecha, tamanio, funcion, aux,
+					  iteraciones);
 }
 
 bool postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
@@ -302,24 +304,24 @@ bool postorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 	if (nodo == NULL)
 		return true;
 
-	bool continua_iterando = true;
+	bool continua_iterando = postorden_con_cada_elemento(
+		nodo->izquierda, tamanio, funcion, aux, iteraciones);
 
-	if (nodo->izquierda)
-		continua_iterando = postorden_con_cada_elemento(
-			nodo->izquierda, tamanio, funcion, aux, iteraciones);
+	if (!continua_iterando)
+		return false;
 
-	if (nodo->derecha)
-		continua_iterando = postorden_con_cada_elemento(
-			nodo->derecha, tamanio, funcion, aux, iteraciones);
+	continua_iterando = postorden_con_cada_elemento(
+		nodo->derecha, tamanio, funcion, aux, iteraciones);
 
-	continua_iterando = funcion(nodo->elemento, aux);
-
-	if (continua_iterando == false)
+	if (!continua_iterando)
 		return false;
 
 	(*iteraciones)++;
 
-	return true;
+	if (funcion(nodo->elemento, aux) == false)
+		return false;
+
+	return continua_iterando;
 }
 
 size_t abb_con_cada_elemento(abb_t *arbol, abb_recorrido recorrido,
