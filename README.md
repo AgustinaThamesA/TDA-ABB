@@ -44,8 +44,19 @@ inorden_recorrer, preorden_recorrer, postorden_recorrer: Funciones auxiliares pa
 
 ### Diagramas relevantes:
 
+Los siguientes diagramas son un ejemplo de cómo fue pensado el algoritmo del TDA.
 
+Por un lado, un ejemplo de diagrama de flujo (en este caso el de inserción), en donde se emplea recursión y se tienen en cuenta los casos bordes.
 
+<div align="center">
+<img width="70%" src="img/diagrama_flujo_insercion_abb.drawio.svg">
+</div>
+
+Por el otro, un diagrama que logra graficar cómo se utiliza el espacio de memoria en el programa, teniendo en cuenta los punteros correspondientes.
+
+<div align="center">
+<img width="70%" src="img/stack_heap_abb.drawio.svg">
+</div>
 
 ### Por ejemplo:
 
