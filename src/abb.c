@@ -131,7 +131,6 @@ void *arbol_borrar_recursivo(abb_t *arbol, void *elemento, nodo_abb_t **nodo)
 		return NULL;
 
 	if (!(arbol->comparador)(elemento, (*nodo)->elemento)) {
-		(arbol->comparador)((*nodo)->elemento, elemento);
 		void *aux = (*nodo)->elemento;
 		borrar_nodo(nodo);
 		return aux;
@@ -164,8 +163,10 @@ void *buscar_nodo_abb(nodo_abb_t *nodo, void *elemento,
 		return buscar_nodo_abb(nodo->izquierda, elemento, comparador);
 	} else if (comparador(elemento, nodo->elemento) > 0) {
 		return buscar_nodo_abb(nodo->derecha, elemento, comparador);
-	} else {
+	} else if (comparador(elemento, nodo->elemento) == 0) {
 		return nodo->elemento;
+	} else {
+		return NULL;
 	}
 }
 
@@ -243,16 +244,6 @@ void abb_destruir_todo(abb_t *arbol, void (*destructor)(void *))
 	free(arbol);
 	arbol = NULL;
 }
-
-/*
-Vos deberias tener:
-If nodo == NULL (eso bien)
-bool continua = recorrer(izquierda)
-if(!continua) return false
-iteraciones++
-if(funcion == false) return false
-return recorrer(derecha)
-*/
 
 bool inorden_con_cada_elemento(nodo_abb_t *nodo, size_t tamanio,
 			       bool (*funcion)(void *, void *), void *aux,

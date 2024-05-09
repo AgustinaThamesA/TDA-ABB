@@ -196,23 +196,32 @@ void pruebas_borrar()
 			     *(int *)elemento_eliminado == prueba_4->clave,
 		     "Saca correctamente el elemento 4 (una hoja).");
 
+	pa2m_afirmar(abb_quitar(abb, &prueba_6->clave) == NULL,
+		     "No se puede eliminar un elemento en un abb con 3 elementos.");
+
 	abb_quitar(abb, &prueba_5->clave);
 	abb_quitar(abb, &prueba_2->clave);
 	abb_quitar(abb, &prueba_1->clave);
 
 	pa2m_afirmar(abb_vacio(abb),
 		     "Se eliminan todos los elementos, abb vacío!");
+	pa2m_afirmar(abb_tamanio(abb) == 0, "Tamaño 0 después de eliminar todos los elementos del abb.");
 
 	pa2m_afirmar(abb_quitar(abb, &prueba_1->clave) == NULL,
-		     "No se puede eliminar un elemento en un abb NULL");
+		     "No se puede eliminar un elemento en un abb NULL.");
 
 	abb_insertar(abb, prueba_5);
 	pa2m_afirmar(
 		!abb_vacio(abb),
 		"Cuando se agrega un elemento al abb vacío, ya no lo está.");
+
 	pa2m_afirmar(
 		abb_tamanio(abb) == 1,
 		"Cuando se agrega un elemento al abb vacío, el tamaño actualiza a 1.");
+
+	pa2m_afirmar(abb_quitar(abb, &prueba_2->clave) == NULL, "Si saco un elemento que no está en el abb, devuelve NULL.");
+	pa2m_afirmar(abb_tamanio(abb) == 1,
+		     "No se puede eliminar un elemento que no está en el abb.");
 
 	destruir_elemento(prueba_1);
 	destruir_elemento(prueba_2);
@@ -374,17 +383,17 @@ void abb_recorrer_funcionalidad()
 	contador = abb_recorrer(abb, INORDEN, array_inorden, 5);
 	pa2m_afirmar(contador == 5 &&
 			     vectores_iguales(vector_inorden, array_inorden, 5),
-		     "Recorrido de parte inorden funciona correctamente.");
+		     "Recorrido parcial inorden funciona correctamente.");
 
 	contador = abb_recorrer(abb, PREORDEN, array_preorden, 5);
 	pa2m_afirmar(contador == 5 && vectores_iguales(vector_preorden,
 						       array_preorden, 5),
-		     "Recorrido de parte preorden funciona correctamente.");
+		     "Recorrido parcial preorden funciona correctamente.");
 
 	contador = abb_recorrer(abb, POSTORDEN, array_postorden, 5);
 	pa2m_afirmar(contador == 5 && vectores_iguales(vector_postorden,
 						       array_postorden, 5),
-		     "Recorrido de parte postorden funciona correctamente.");
+		     "Recorrido parcial postorden funciona correctamente.");
 
 	free(vector_inorden);
 	free(vector_preorden);
